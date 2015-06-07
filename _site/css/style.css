@@ -1,0 +1,154 @@
+/* style.scss */
+.pastel1 {
+  background: #1ABC9C !important;
+  fill: #1ABC9C !important; }
+
+.pastel2 {
+  background: #2ECC71 !important;
+  fill: #2ECC71 !important; }
+
+.pastel3 {
+  background: #E67E22 !important;
+  fill: #E67E22 !important; }
+
+.pastel4 {
+  background: #3498DB !important;
+  fill: #3498DB !important; }
+
+.pastel5 {
+  background: #9B59B6 !important;
+  fill: #9B59B6 !important; }
+
+.pastel6 {
+  background: #ec95d8 !important;
+  fill: #ec95d8 !important; }
+
+.pastel7 {
+  background: #F1C40F !important;
+  fill: #F1C40F !important; }
+
+.pastel8 {
+  background: #16A085 !important;
+  fill: #16A085 !important; }
+
+.pastel9 {
+  background: #E74C3C !important;
+  fill: #E74C3C !important; }
+
+.pastel10 {
+  background: #F39C12 !important;
+  fill: #F39C12 !important; }
+
+.pastel11 {
+  background: #AC6D4A !important;
+  fill: #AC6D4A !important; }
+
+.pastel12 {
+  background: #D35400 !important;
+  fill: #D35400 !important; }
+
+.pastel13 {
+  background: #16A085 !important;
+  fill: #16A085 !important; }
+
+.pastel14 {
+  background: #C0392B !important;
+  fill: #C0392B !important; }
+
+.text-pastel1 {
+  color: #1ABC9C; }
+
+.text-pastel2 {
+  color: #2ECC71; }
+
+.text-pastel3 {
+  color: #E67E22; }
+
+.text-pastel4 {
+  color: #3498DB; }
+
+.text-pastel5 {
+  color: #9B59B6; }
+
+.text-pastel6 {
+  color: #ec95d8; }
+
+.text-pastel7 {
+  color: #F1C40F; }
+
+.text-pastel8 {
+  color: #16A085; }
+
+.text-pastel9 {
+  color: #E74C3C; }
+
+.text-pastel10 {
+  color: #F39C12; }
+
+* {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  font-size: 12px;
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.2;
+  min-width: 320px;
+  -webkit-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  text-size-adjust: none;
+  background: #0b61a3;
+  color: #ffffff;
+  font-size: 16px;
+  margin: 0; }
+
+path {
+  fill: none;
+  stroke: none;
+  stroke-width: 1px; }
+
+.line {
+  stroke: #00ff00;
+  stroke-width: 1px;
+  transition: all 1s; }
+
+@keyframes showGlow {
+  0% {
+    transform: scale(0);
+    opacity: 1; }
+  80% {
+    opacity: 1; }
+  100% {
+    transform: scale(1);
+    opacity: 0; } }
+.glow {
+  fill: none;
+  stroke: #00ff00;
+  stroke-width: 1px;
+  transform: scale(0);
+  opacity: 1; }
+  .glow.active {
+    animation: showGlow linear 0.5s 1;
+    -moz-animation: showGlow linear 0.5s 1;
+    -webkit-animation: showGlow linear 0.5s 1;
+    animation-delay: 0;
+    -moz-animation-delay: 0;
+    /* Firefox */
+    -webkit-animation-delay: 0;
+    /* Safari and Chrome */
+    -o-animation-delay: 0;
+    /* Opera */
+    animation-timing-function: ease-out;
+    -moz-animation-timing-function: ease-out;
+    /* Firefox */
+    -webkit-animation-timing-function: ease-out;
+    /* Safari and Chrome */
+    -o-animation-timing-function: ease-out;
+    /* Opera */ }
+
+/*# sourceMappingURL=style.css.map */

@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>D3 Particles</title>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="js/underscore-min.js" charset="utf-8"></script>
+    <script src="js/Tween.js" charset="utf-8"></script>
+    <link type="text/css" href="css/style.css" rel="stylesheet"/>
+
+</head>
+
+<style>
+
+body {
+  margin: 0;
+  min-width: 960px;
+}
+
+rect {
+  fill: none;
+  pointer-events: all;
+}
+
+circle {
+  fill: none;
+  stroke-width: 2.5px;
+}
+
+</style>
+<body>
+
+
+    <script>
+
+        var width = Math.max(960, innerWidth),
+            height = Math.max(500, innerHeight);
+
+        var margin = {top: 0, left: 48, right: 48, bottom: 0};
+
+        var numParticles = 64;
+        var numPointsPerPath = 12;
+        var avgDist = (width + 240)/numPointsPerPath;
+
+        var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        svg.append("rect")
+            .attr("width", width)
+            .attr("height", height);
+
+        var paths = [];
+
+        for (i = 0; i < numParticles; i++) {
+            
+            var p = [];
+            
+            var rev = Math.random() * .8 + .2;
+            
+            var multiplier = Math.random() * 16 + 2;
+
+            var yOffset = d3.scale.linear()
+               .domain([0, numPointsPerPath/5, numPointsPerPath * .8,numPointsPerPath])
+               .range([32, 48, -24, 0]);
+
+            var xStart = (Math.random() * 64);
+            var yStart = (Math.random() * 64) + height/1.8;
+
+            var waveFunc = function(val) { 
+                return i%2 === 0 ? Math.cos(val) : Math.sin(val);
+            }
+            
+            for (j = 0; j < numPointsPerPath; j++) {
+
+                var x = avgDist * j + margin.left + xStart;
+                var y = waveFunc(j * rev) * (j * multiplier) + (j * yOffset(j)) + yStart;
+
+                p.push([x,y]);
+
+            }
+
+            paths.push(p);
+        }
+
+        var duration = 30000;
+
+        var nodes = [];
+
+        paths.forEach(function(d, i){
+
+            var path = svg.append("path")
+                .data([d])
+                .attr("d", d3.svg.line());
+            
+            var node = svg.append("g")
+                .classed("node", true)
+                .attr("transform", "translate(" + d[0] + ")");
+
+            node.append("circle")
+                .attr("r", 0)
+                .style("fill", "#00ff00")
+                .classed("center", true);
+
+            node.append("circle")
+                .attr("r", 24)
+                .classed("glow", true);
+
+            var delay = Math.random() * duration;
+
+            nodes.push({elem: node, path: path, delay: delay, firstRender: true, draw: true});
+
+        });
+
+        var sortedNodes = _.sortBy(nodes, "delay");
+
+        sortedNodes.forEach(function(d, i){
+
+            if (i > 0) {
+                d.elem.append("line")
+                .classed("line", true);
+
+                /*
+                d.elem.append("text")
+                .text(i);
+                */
+            }
+
+            transition(d, i > 0 ? sortedNodes[i-1] : null);
+        });
+
+        function transition(node, prevNode) {
+
+            var dur = node.firstRender ? (duration - node.delay) + node.delay : duration;
+
+            var del = node.firstRender ? 0 : node.delay;
+
+            node.elem.transition()
+                .duration(dur)
+                .delay(del)
+                .ease("linear")
+                .attrTween("transform", translateAlong(node, prevNode))
+                .each("end", function(){ 
+                    transition(node, prevNode);
+                });
+
+        }
+
+        function translateAlong(node, prevNode) {
+
+            var path = node.path.node();
+            var l = path.getTotalLength();
+
+            var scaleOffset = (Math.random() * 12);
+            var x = d3.scale.linear()
+               .domain([0,  .6, 1])
+               .range([0, scaleOffset + 8, scaleOffset + 4]);
+
+            var elem = node.elem;
+
+            return function() {
+            
+                return function(t) {
+
+                    var t_offset = node.firstRender ? (duration - node.delay)/duration + t : t;
+
+                    t_offset = t_offset > 1 ? t_offset - 1 : t_offset;
+
+                    elem.selectAll(".center")
+                    .attr("r", function(){ return x(t_offset);});
+
+                    var p = path.getPointAtLength(t_offset * l);
+
+
+                    if (prevNode) {
+
+                        var line = elem.selectAll("line");
+
+                        var prevTransform = d3.transform(prevNode.elem.attr("transform")).translate;
+                        var currTransform = [p.x, p.y];
+
+
+                        var distance = Math.sqrt(Math.pow(prevTransform[0] - currTransform[0], 2) + Math.pow(prevTransform[1] - currTransform[1], 2));
+
+                        var draw =  distance < 160 && prevTransform[0] > 320;
+
+                        debugger;
+
+                        line.attr("x2", function(){ return draw ? prevTransform[0] - currTransform[0] : 0 })
+                            .attr("y2", function(){ return draw ? prevTransform[1] - currTransform[1] : 0 })
+                            .style("stroke-width", function(){ return distance > 140 ? "1px" : "2px"});
+
+
+                        if (draw && node.startGlow) {
+                                elem.selectAll(".glow")
+                                    .attr("r", function(){ return x(t_offset) * 5;})
+                                    .classed("active", true);
+                                
+
+                            } 
+
+                        if (!draw) {
+                                elem.selectAll(".glow")
+                                    .classed("active", false);
+
+                                node.startGlow = true;
+                            }
+
+                        
+
+                        node.draw = draw;
+
+                    }
+
+                    
+
+                    return "translate(" + p.x + "," + p.y + ")";
+
+                };
+            };
+        }
+
+    </script>
+
+</body>
+</html>
